@@ -1,15 +1,27 @@
-﻿namespace Calendar
+﻿using System;
+
+using Calendar.Events;
+
+namespace Calendar
 {
     public class Planner
     {
+        private readonly IEventsRepository eventsRepository;
+
         public Planner(IEventsRepository eventsRepository)
         {
-            throw new System.NotImplementedException();
+            this.eventsRepository = eventsRepository;
         }
 
-        public CalendarEvent[] GetEvents()
+        public CalendarEvent[] GetEvents(DateSpan dateSpan)
         {
-            throw new System.NotImplementedException();
+            return eventsRepository.GetEvents(dateSpan);
+        }
+
+        public void AddEvent(CalendarEvent eventToAdd)
+        {
+            throw new NotImplementedException();
+            //eventToAdd.AddToEventsRepository(eventsRepository);
         }
     }
 }
