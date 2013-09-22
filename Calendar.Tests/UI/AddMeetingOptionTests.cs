@@ -21,7 +21,7 @@ namespace Calendar.Tests.UI
         [Test]
         public void ShouldMatchItsOptionString()
         {
-            Func<CalendarEvent> meetingFactory = Substitute.For<Func<CalendarEvent>>();
+            Func<CalendarEventBase> meetingFactory = Substitute.For<Func<CalendarEventBase>>();
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
 
             AddMeetingOption addMeetingOption = new AddMeetingOption(meetingFactory, eventsRepository);
@@ -32,8 +32,8 @@ namespace Calendar.Tests.UI
         [Test]
         public void ShouldCreateMeetingAndAddItToPlanner()
         {
-            CalendarEvent meetingEvent = Substitute.For<CalendarEvent>();
-            Func<CalendarEvent> meetingFactory = Substitute.For<Func<CalendarEvent>>();
+            CalendarEventBase meetingEvent = Substitute.For<CalendarEventBase>();
+            Func<CalendarEventBase> meetingFactory = Substitute.For<Func<CalendarEventBase>>();
             meetingFactory().Returns(meetingEvent);
 
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();

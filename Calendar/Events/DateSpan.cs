@@ -4,6 +4,7 @@ namespace Calendar.Events
 {
     public sealed class DateSpan
     {
+        public static readonly DateSpan Max = new DateSpan(DateTime.MinValue, DateTime.MaxValue);
         private readonly DateTime startTime;
         private readonly DateTime endTime;
 

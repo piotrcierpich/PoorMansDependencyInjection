@@ -21,7 +21,7 @@ namespace Calendar.Tests.UI
         [Test]
         public void ShouldMatchItsOptionAsString()
         {
-            Func<CalendarEvent> todoEventFactory = Substitute.For<Func<CalendarEvent>>();
+            Func<CalendarEventBase> todoEventFactory = Substitute.For<Func<CalendarEventBase>>();
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
 
             AddTodoOption addTodoOption = new AddTodoOption(todoEventFactory, eventsRepository);
@@ -32,8 +32,8 @@ namespace Calendar.Tests.UI
         [Test]
         public void ShouldCreateTodoAndAddItToPlanner()
         {
-            CalendarEvent todoEvent = Substitute.For<CalendarEvent>();
-            Func<CalendarEvent> todoEventFactory = Substitute.For<Func<CalendarEvent>>();
+            CalendarEventBase todoEvent = Substitute.For<CalendarEventBase>();
+            Func<CalendarEventBase> todoEventFactory = Substitute.For<Func<CalendarEventBase>>();
             todoEventFactory().Returns(todoEvent);
 
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();

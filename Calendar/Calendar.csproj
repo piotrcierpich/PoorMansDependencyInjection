@@ -43,7 +43,8 @@
   <ItemGroup>
     <Compile Include="Events\AddPolicy\ExclusiveSchedulePolicy.cs" />
     <Compile Include="Events\AddPolicy\IAddPolicy.cs" />
-    <Compile Include="Events\CalendarEvent.cs" />
+    <Compile Include="Events\ICalendarEvent.cs" />
+    <Compile Include="Events\CalendarEventBase.cs" />
     <Compile Include="Events\IEventsRepository.cs" />
     <Compile Include="Events\Meeting.cs" />
     <Compile Include="Events\AddPolicy\ShareableSchedulePolicy.cs" />

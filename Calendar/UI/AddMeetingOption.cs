@@ -8,10 +8,10 @@ namespace Calendar.UI
     {
         public static string AddMeetingOptionString = "M";
 
-        private readonly Func<CalendarEvent> meetingFactory;
+        private readonly Func<CalendarEventBase> meetingFactory;
         private readonly IEventsRepository eventsRepository;
 
-        public AddMeetingOption(Func<CalendarEvent> meetingFactory, IEventsRepository eventsRepository)
+        public AddMeetingOption(Func<CalendarEventBase> meetingFactory, IEventsRepository eventsRepository)
         {
             this.meetingFactory = meetingFactory;
             this.eventsRepository = eventsRepository;
@@ -24,7 +24,7 @@ namespace Calendar.UI
 
         public void Run()
         {
-            CalendarEvent calendarEvent = meetingFactory();
+            CalendarEventBase calendarEvent = meetingFactory();
             eventsRepository.AddEvent(calendarEvent);
         }
     }

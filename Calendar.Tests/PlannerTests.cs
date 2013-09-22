@@ -15,7 +15,7 @@ namespace Calendar.Tests
         {
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
             Planner planner = new Planner(eventsRepository);
-            DateSpan dateSpan = Arg.Any<DateSpan>();
+            DateSpan dateSpan = DateSpan.Max;
             planner.GetEvents(dateSpan);
             eventsRepository.Received(1).GetEvents(dateSpan);
         }
@@ -25,10 +25,12 @@ namespace Calendar.Tests
         {
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
             Planner planner = new Planner(eventsRepository);
-            CalendarEvent eventToAdd = Substitute.For<CalendarEvent>();
+            ICalendarEvent eventToAdd = Substitute.For<ICalendarEvent>();
+            IAddPolicy addPolicy = Substitute.For<IAddPolicy>();
+            eventToAdd.AddPolicy.Returns(addPolicy);
+
             planner.AddEvent(eventToAdd);
-            //eventToAdd.Received(1).AddToEventsRepository(eventsRepository);
-            Assert.Fail("not implemented");
+            addPolicy.Received(1).TryAddToRepository();
         }
     }
 }

@@ -8,10 +8,10 @@ namespace Calendar.UI
     {
         internal const string AddToDoOptionString = "a";
 
-        private readonly Func<CalendarEvent> todoEventFactory;
+        private readonly Func<CalendarEventBase> todoEventFactory;
         private readonly IEventsRepository eventsRepository;
 
-        public AddTodoOption(Func<CalendarEvent> todoEventFactory, IEventsRepository eventsRepository)
+        public AddTodoOption(Func<CalendarEventBase> todoEventFactory, IEventsRepository eventsRepository)
         {
             this.todoEventFactory = todoEventFactory;
             this.eventsRepository = eventsRepository;
@@ -29,7 +29,7 @@ namespace Calendar.UI
 
         public void Run()
         {
-            CalendarEvent calendarEvent = todoEventFactory();
+            CalendarEventBase calendarEvent = todoEventFactory();
             eventsRepository.AddEvent(calendarEvent);
         }
     }

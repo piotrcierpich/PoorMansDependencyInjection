@@ -13,28 +13,28 @@ namespace Calendar.Tests.Events.AddPolicy
     class ExclusiveSchedulePolicyTests
     {
         private static readonly DateTime Tommorrow = DateTime.Today.AddDays(1);
-        private static readonly DateTime DayBeforeYesterday = DateTime.Today.Subtract(TimeSpan.FromDays(2));
-        private static readonly DateTime Yesterday = DateTime.Today.Subtract(TimeSpan.FromDays(1));
 
         [Test]
         public void ShouldCanShareTimeSlotBeFalse()
         {
-            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy();
+            IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
+            CalendarEventBase eventToAdd = Substitute.For<CalendarEventBase>();
+            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository, eventToAdd);
             Assert.IsFalse(exclusiveSchedulePolicy.CanShareTimeSlot);
         }
 
         [Test]
         public void ShouldAddIfNoOtherMeetingIntersects()
         {
-            CalendarEvent eventToAdd = Substitute.For<CalendarEvent>();
+            ICalendarEvent eventToAdd = Substitute.For<ICalendarEvent>();
             DateSpan eventToAddSchedule = new DateSpan(DateTime.Today, Tommorrow);
             eventToAdd.Schedule.Returns(eventToAddSchedule);
 
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
-            eventsRepository.GetEvents(eventToAdd.Schedule).Returns(new CalendarEvent[0]);
+            eventsRepository.GetEvents(eventToAdd.Schedule).Returns(new ICalendarEvent[0]);
 
-            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy();
-            exclusiveSchedulePolicy.AddEventToRepository(eventToAdd, eventsRepository);
+            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository, eventToAdd);
+            exclusiveSchedulePolicy.TryAddToRepository();
 
             eventsRepository.Received(1).AddEvent(eventToAdd);
         }
@@ -42,18 +42,37 @@ namespace Calendar.Tests.Events.AddPolicy
         [Test]
         public void ShouldNotAddWhenOtherExclusiveEventIntersects()
         {
-            CalendarEvent eventToAdd = Substitute.For<CalendarEvent>();
-            CalendarEvent exclusiveIntersectingEvent = Substitute.For<CalendarEvent>();
-            exclusiveIntersectingEvent.AddPolicy.CanShareTimeSlot.Returns(false);
+            ICalendarEvent eventToAdd = Substitute.For<ICalendarEvent>();
+            ICalendarEvent exclusiveIntersectingEvent = Substitute.For<ICalendarEvent>();
+            IAddPolicy nonShareablePolicy = Substitute.For<IAddPolicy>();
+            nonShareablePolicy.CanShareTimeSlot.Returns(false);
+            exclusiveIntersectingEvent.AddPolicy.Returns(nonShareablePolicy);
 
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
             eventsRepository.GetEvents(eventToAdd.Schedule).Returns(new[] { exclusiveIntersectingEvent });
 
-            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy();
-            exclusiveSchedulePolicy.AddEventToRepository(eventToAdd, eventsRepository);
+            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository, eventToAdd);
+            exclusiveSchedulePolicy.TryAddToRepository();
+
+            eventsRepository.DidNotReceive().AddEvent(eventToAdd);
+        }
+
+        [Test]
+        public void ShouldAddWhenOtherEventsCanShareTimeSlot()
+        {
+            ICalendarEvent eventToAdd = Substitute.For<ICalendarEvent>();
+            ICalendarEvent nonExclusiveIntersectingEvent = Substitute.For<ICalendarEvent>();
+            IAddPolicy shareablePolicy = Substitute.For<IAddPolicy>();
+            shareablePolicy.CanShareTimeSlot.Returns(true);
+            nonExclusiveIntersectingEvent.AddPolicy.Returns(shareablePolicy);
+
+            IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
+            eventsRepository.GetEvents(eventToAdd.Schedule).Returns(new[] { nonExclusiveIntersectingEvent });
+
+            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository, eventToAdd);
+            exclusiveSchedulePolicy.TryAddToRepository();
 
             eventsRepository.Received(1).AddEvent(eventToAdd);
-            Assert.Fail("unfinished");
         }
     }
 }

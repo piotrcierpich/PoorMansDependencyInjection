@@ -2,7 +2,16 @@
 {
     class ShareableSchedulePolicy : IAddPolicy
     {
-        public void AddEventToRepository(CalendarEvent calendarEvent, IEventsRepository eventsRepository)
+        private readonly IEventsRepository eventsRepository;
+        private readonly CalendarEventBase calendarEvent;
+
+        public ShareableSchedulePolicy(IEventsRepository eventsRepository, CalendarEventBase calendarEvent)
+        {
+            this.eventsRepository = eventsRepository;
+            this.calendarEvent = calendarEvent;
+        }
+
+        public void TryAddToRepository()
         {
             eventsRepository.AddEvent(calendarEvent);
         }

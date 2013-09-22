@@ -2,7 +2,7 @@
 {
     public interface IEventsRepository
     {
-        CalendarEvent[] GetEvents(DateSpan schedule);
-        void AddEvent(CalendarEvent eventToAdd);
+        ICalendarEvent[] GetEvents(DateSpan schedule);
+        void AddEvent(ICalendarEvent eventToAdd);
     }
 }

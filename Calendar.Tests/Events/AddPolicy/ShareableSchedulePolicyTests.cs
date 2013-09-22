@@ -13,17 +13,20 @@ namespace Calendar.Tests.Events.AddPolicy
         [Test]
         public void ShouldCanShareTimeSlotBeTrue()
         {
-            ShareableSchedulePolicy shareableSchedulePolicy = new ShareableSchedulePolicy();
+            CalendarEventBase calendarEvent = Substitute.For<CalendarEventBase>();
+            IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
+            ShareableSchedulePolicy shareableSchedulePolicy = new ShareableSchedulePolicy(eventsRepository, calendarEvent);
             Assert.IsTrue(shareableSchedulePolicy.CanShareTimeSlot);
         }
 
         [Test]
         public void ShouldAddToEventsRepositoryWhenAskedFor()
         {
-            CalendarEvent calendarEvent = Substitute.For<CalendarEvent>();
+            CalendarEventBase calendarEvent = Substitute.For<CalendarEventBase>();
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
-            ShareableSchedulePolicy shareableSchedulePolicy = new ShareableSchedulePolicy();
-            shareableSchedulePolicy.AddEventToRepository(calendarEvent, eventsRepository);
+            ShareableSchedulePolicy shareableSchedulePolicy = new ShareableSchedulePolicy(eventsRepository, calendarEvent);
+            shareableSchedulePolicy.TryAddToRepository();
+            eventsRepository.Received(1).AddEvent(calendarEvent);
         }
     }
 }

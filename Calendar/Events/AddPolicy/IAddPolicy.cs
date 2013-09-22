@@ -2,7 +2,7 @@
 {
     public interface IAddPolicy
     {
-        void AddEventToRepository(CalendarEvent calendarEvent,  IEventsRepository eventsRepository);
+        void TryAddToRepository();
         bool CanShareTimeSlot { get; }
     }
 }

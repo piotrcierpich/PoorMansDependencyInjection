@@ -1,10 +1,6 @@
 ﻿namespace Calendar.Events
 {
-    class Todo : CalendarEvent
+    class Todo : CalendarEventBase
     {
-        //public override void AddToEventsRepository(IEventsRepository eventsRepository)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
     }
 }

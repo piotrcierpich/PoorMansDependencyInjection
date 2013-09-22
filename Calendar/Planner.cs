@@ -1,6 +1,4 @@
-﻿using System;
-
-using Calendar.Events;
+﻿using Calendar.Events;
 
 namespace Calendar
 {
@@ -13,15 +11,14 @@ namespace Calendar
             this.eventsRepository = eventsRepository;
         }
 
-        public CalendarEvent[] GetEvents(DateSpan dateSpan)
+        public ICalendarEvent[] GetEvents(DateSpan dateSpan)
         {
             return eventsRepository.GetEvents(dateSpan);
         }
 
-        public void AddEvent(CalendarEvent eventToAdd)
+        public void AddEvent(ICalendarEvent eventToAdd)
         {
-            throw new NotImplementedException();
-            //eventToAdd.AddToEventsRepository(eventsRepository);
+            eventToAdd.AddPolicy.TryAddToRepository();
         }
     }
 }
