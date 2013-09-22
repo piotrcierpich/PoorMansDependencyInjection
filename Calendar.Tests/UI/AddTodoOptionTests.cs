@@ -32,8 +32,8 @@ namespace Calendar.Tests.UI
         [Test]
         public void ShouldCreateTodoAndAddItToPlanner()
         {
-            CalendarEventBase todoEvent = Substitute.For<CalendarEventBase>();
-            Func<CalendarEventBase> todoEventFactory = Substitute.For<Func<CalendarEventBase>>();
+            ICalendarEvent todoEvent = Substitute.For<ICalendarEvent>();
+            Func<ICalendarEvent> todoEventFactory = Substitute.For<Func<ICalendarEvent>>();
             todoEventFactory().Returns(todoEvent);
 
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();

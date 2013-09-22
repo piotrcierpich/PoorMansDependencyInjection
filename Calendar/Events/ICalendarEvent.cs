@@ -4,8 +4,8 @@ namespace Calendar.Events
 {
     public interface ICalendarEvent
     {
-        DateSpan Schedule { get; set; }
-        string Title { get; set; }
+        DateSpan Schedule { get; }
+        string Title { get; }
         IAddPolicy AddPolicy { get; }
     }
 }

@@ -32,8 +32,8 @@ namespace Calendar.Tests.UI
         [Test]
         public void ShouldCreateMeetingAndAddItToPlanner()
         {
-            CalendarEventBase meetingEvent = Substitute.For<CalendarEventBase>();
-            Func<CalendarEventBase> meetingFactory = Substitute.For<Func<CalendarEventBase>>();
+            ICalendarEvent meetingEvent = Substitute.For<ICalendarEvent>();
+            Func<ICalendarEvent> meetingFactory = Substitute.For<Func<ICalendarEvent>>();
             meetingFactory().Returns(meetingEvent);
 
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();

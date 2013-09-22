@@ -18,8 +18,8 @@ namespace Calendar.Tests.Events.AddPolicy
         public void ShouldCanShareTimeSlotBeFalse()
         {
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
-            CalendarEventBase eventToAdd = Substitute.For<CalendarEventBase>();
-            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository, eventToAdd);
+            ICalendarEvent eventToAdd = Substitute.For<ICalendarEvent>();
+            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository) { EventToAdd = eventToAdd };
             Assert.IsFalse(exclusiveSchedulePolicy.CanShareTimeSlot);
         }
 
@@ -33,7 +33,7 @@ namespace Calendar.Tests.Events.AddPolicy
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
             eventsRepository.GetEvents(eventToAdd.Schedule).Returns(new ICalendarEvent[0]);
 
-            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository, eventToAdd);
+            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository) { EventToAdd = eventToAdd };
             exclusiveSchedulePolicy.TryAddToRepository();
 
             eventsRepository.Received(1).AddEvent(eventToAdd);
@@ -51,7 +51,7 @@ namespace Calendar.Tests.Events.AddPolicy
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
             eventsRepository.GetEvents(eventToAdd.Schedule).Returns(new[] { exclusiveIntersectingEvent });
 
-            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository, eventToAdd);
+            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository);
             exclusiveSchedulePolicy.TryAddToRepository();
 
             eventsRepository.DidNotReceive().AddEvent(eventToAdd);
@@ -69,7 +69,7 @@ namespace Calendar.Tests.Events.AddPolicy
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
             eventsRepository.GetEvents(eventToAdd.Schedule).Returns(new[] { nonExclusiveIntersectingEvent });
 
-            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository, eventToAdd);
+            ExclusiveSchedulePolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository) { EventToAdd = eventToAdd };
             exclusiveSchedulePolicy.TryAddToRepository();
 
             eventsRepository.Received(1).AddEvent(eventToAdd);

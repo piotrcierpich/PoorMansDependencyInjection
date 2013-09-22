@@ -5,20 +5,21 @@ namespace Calendar.Events.AddPolicy
     internal class ExclusiveSchedulePolicy : IAddPolicy
     {
         private readonly IEventsRepository eventsRepository;
-        private readonly ICalendarEvent eventToAdd;
 
-        public ExclusiveSchedulePolicy(IEventsRepository eventsRepository, ICalendarEvent eventToAdd)
+        public ExclusiveSchedulePolicy(IEventsRepository eventsRepository)
         {
             this.eventsRepository = eventsRepository;
-            this.eventToAdd = eventToAdd;
         }
 
         public void TryAddToRepository()
         {
-            ICalendarEvent[] intersectingEvents = eventsRepository.GetEvents(eventToAdd.Schedule);
+            if (EventToAdd == null)
+                return;
+
+            ICalendarEvent[] intersectingEvents = eventsRepository.GetEvents(EventToAdd.Schedule);
             if (intersectingEvents.All(ie => ie.AddPolicy.CanShareTimeSlot))
             {
-                eventsRepository.AddEvent(eventToAdd);
+                eventsRepository.AddEvent(EventToAdd);
             }
         }
 
@@ -26,5 +27,7 @@ namespace Calendar.Events.AddPolicy
         {
             get { return false; }
         }
+
+        public ICalendarEvent EventToAdd { get; set; }
     }
 }

@@ -3,19 +3,22 @@
     class ShareableSchedulePolicy : IAddPolicy
     {
         private readonly IEventsRepository eventsRepository;
-        private readonly CalendarEventBase calendarEvent;
 
-        public ShareableSchedulePolicy(IEventsRepository eventsRepository, CalendarEventBase calendarEvent)
+        public ShareableSchedulePolicy(IEventsRepository eventsRepository)
         {
             this.eventsRepository = eventsRepository;
-            this.calendarEvent = calendarEvent;
         }
 
         public void TryAddToRepository()
         {
-            eventsRepository.AddEvent(calendarEvent);
+            if (CalendarEvent == null)
+                return;
+
+            eventsRepository.AddEvent(CalendarEvent);
         }
 
         public bool CanShareTimeSlot { get { return true; } }
+
+        public ICalendarEvent CalendarEvent { get; set; }
     }
 }
