@@ -1,11 +1,16 @@
-﻿using Calendar.Events.AddPolicy;
+﻿using System;
+
+using Calendar.Events.AddPolicy;
 
 namespace Calendar.Events
 {
+    [Serializable]
     public abstract class CalendarEventBase : ICalendarEvent
     {
         private readonly DateSpan schedule;
         private readonly string title;
+
+        [NonSerialized]
         private readonly IAddPolicy addPolicy;
 
         protected CalendarEventBase(DateSpan schedule, string title, IAddPolicy addPolicy)

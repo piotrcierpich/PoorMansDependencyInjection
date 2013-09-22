@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -18,6 +19,18 @@ namespace Calendar.DataAccess
         }
 
         public ICalendarEvent[] GetEvents(DateSpan schedule)
+        {
+            try
+            {
+                return TryReadingCalendarEvents();
+            }
+            catch (Exception)
+            {
+                return new ICalendarEvent[0];
+            }
+        }
+
+        private ICalendarEvent[] TryReadingCalendarEvents()
         {
             using (Stream s = File.OpenRead(fileName))
             {

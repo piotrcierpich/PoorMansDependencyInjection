@@ -8,10 +8,10 @@ namespace Calendar.UI
     {
         internal const string AddToDoOptionString = "a";
 
-        private readonly Func<ICalendarEvent> todoEventFactory;
+        private readonly Func<DateSpan, string, Todo> todoEventFactory;
         private readonly IEventsRepository eventsRepository;
 
-        public AddTodoOption(Func<ICalendarEvent> todoEventFactory, IEventsRepository eventsRepository)
+        public AddTodoOption(Func<DateSpan, string, Todo> todoEventFactory, IEventsRepository eventsRepository)
         {
             this.todoEventFactory = todoEventFactory;
             this.eventsRepository = eventsRepository;
@@ -24,12 +24,15 @@ namespace Calendar.UI
 
         public override string ToString()
         {
-            return AddToDoOptionString;
+            return AddToDoOptionString + " - todo";
         }
 
         public void Run()
         {
-            ICalendarEvent calendarEvent = todoEventFactory();
+            DateSpan schedule = DateSpanReader.PromptForDateSpan();
+            Console.Write("Title: ");
+            string title = Console.ReadLine();
+            ICalendarEvent calendarEvent = todoEventFactory(schedule, title);
             eventsRepository.AddEvent(calendarEvent);
         }
     }

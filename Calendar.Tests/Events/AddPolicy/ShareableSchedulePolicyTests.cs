@@ -15,7 +15,7 @@ namespace Calendar.Tests.Events.AddPolicy
         {
             ICalendarEvent calendarEvent = Substitute.For<ICalendarEvent>();
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
-            ShareableSchedulePolicy shareableSchedulePolicy = new ShareableSchedulePolicy(eventsRepository, calendarEvent);
+            ShareableSchedulePolicy shareableSchedulePolicy = new ShareableSchedulePolicy(eventsRepository) { CalendarEvent = calendarEvent };
             Assert.IsTrue(shareableSchedulePolicy.CanShareTimeSlot);
         }
 
@@ -24,7 +24,7 @@ namespace Calendar.Tests.Events.AddPolicy
         {
             ICalendarEvent calendarEvent = Substitute.For<ICalendarEvent>();
             IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
-            ShareableSchedulePolicy shareableSchedulePolicy = new ShareableSchedulePolicy(eventsRepository, calendarEvent);
+            ShareableSchedulePolicy shareableSchedulePolicy = new ShareableSchedulePolicy(eventsRepository) { CalendarEvent = calendarEvent };
             shareableSchedulePolicy.TryAddToRepository();
             eventsRepository.Received(1).AddEvent(calendarEvent);
         }

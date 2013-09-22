@@ -17,10 +17,10 @@ namespace Calendar
             ContainerBuilder containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterType<OptionsDispatcher>().SingleInstance();
             containerBuilder.RegisterInstance(Console.In);
-            containerBuilder.Register(c => new AddTodoOption(c.Resolve<Func<Todo>>(), c.Resolve<IEventsRepository>()))
-                            .As<IOption>();
+            containerBuilder.RegisterType<AddTodoOption>().As<IOption>();
             containerBuilder.Register(c => new AddMeetingOption(c.Resolve<Func<Meeting>>(), c.Resolve<IEventsRepository>()))
                             .As<IOption>();
+            containerBuilder.RegisterType<ListEventsOption>().As<IOption>();
             containerBuilder.RegisterType<EventsRepository>().As<IEventsRepository>().WithParameter("fileName", "calendarData.dat");
             containerBuilder.RegisterType<Planner>();
 
@@ -42,6 +42,14 @@ namespace Calendar
                             .InstancePerLifetimeScope()
                             .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
 
+            using (IContainer container = containerBuilder.Build())
+            {
+                using (ILifetimeScope innerScope = container.BeginLifetimeScope())
+                {
+                    OptionsDispatcher optionsDispatcher = innerScope.Resolve<OptionsDispatcher>();
+                    optionsDispatcher.ChooseOptionAndRun();
+                }
+            }
 
         }
     }

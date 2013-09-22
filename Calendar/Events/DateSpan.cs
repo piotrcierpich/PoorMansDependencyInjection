@@ -2,6 +2,7 @@
 
 namespace Calendar.Events
 {
+    [Serializable]
     public sealed class DateSpan
     {
         public static readonly DateSpan Max = new DateSpan(DateTime.MinValue, DateTime.MaxValue);
