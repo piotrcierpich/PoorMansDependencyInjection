@@ -17,17 +17,17 @@ namespace Calendar.UI
             this.planner = planner;
         }
 
-        public bool MatchesString(string chosenOptionAsString)
+        public virtual bool MatchesString(string chosenOptionAsString)
         {
             return StringComparer.InvariantCultureIgnoreCase.Equals(chosenOptionAsString, AddToDoOptionString);
         }
 
-        public override string ToString()
+        public sealed override string ToString()
         {
             return AddToDoOptionString + " - todo";
         }
 
-        public bool Run()
+        public virtual bool Run()
         {
             DateSpan schedule = DateSpanReader.PromptForDateSpan();
             Console.Write("Title: ");

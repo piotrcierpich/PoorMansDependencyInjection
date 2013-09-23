@@ -33,16 +33,16 @@ namespace Calendar.Tests.UI
     [Ignore("ignore until implement TextReader dependency injection into AddMeetingOption replacing Console.Readline")]
     public void ShouldCreateMeetingAndAddItToPlanner()
     {
-      Meeting meetingEvent = new Meeting(DateSpan.Max, string.Empty, null, new string[0]);
-      Func<DateSpan, string, string[], Meeting> meetingFactory = Substitute.For<Func<DateSpan, string, string[], Meeting>>();
-      meetingFactory(Arg.Any<DateSpan>(), Arg.Any<string>(), Arg.Any<string[]>()).Returns(meetingEvent);
+      //Meeting meetingEvent = new Meeting(DateSpan.Max, string.Empty, null, new string[0]);
+      //Func<DateSpan, string, string[], Meeting> meetingFactory = Substitute.For<Func<DateSpan, string, string[], Meeting>>();
+      //meetingFactory(Arg.Any<DateSpan>(), Arg.Any<string>(), Arg.Any<string[]>()).Returns(meetingEvent);
 
-      IPlanner planner = Substitute.For<IPlanner>();
-      AddMeetingOption addMeetingOption = new AddMeetingOption(meetingFactory, planner);
+      //IPlanner planner = Substitute.For<IPlanner>();
+      //AddMeetingOption addMeetingOption = new AddMeetingOption(meetingFactory, planner);
 
-      addMeetingOption.Run();
+      //addMeetingOption.Run();
 
-      planner.Received(1).AddEvent(meetingEvent);
+      //planner.Received(1).AddEvent(meetingEvent);
     }
   }
 }

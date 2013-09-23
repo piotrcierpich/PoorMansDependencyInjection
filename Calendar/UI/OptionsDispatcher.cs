@@ -16,7 +16,7 @@ namespace Calendar.UI
             this.textReader = textReader;
         }
 
-        public bool ChooseOptionAndRun()
+        public virtual bool ChooseOptionAndRun()
         {
             IOption option = PrintAndChooseOption();
             return option.Run();

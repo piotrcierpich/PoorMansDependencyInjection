@@ -15,7 +15,6 @@ namespace Calendar.Logging
         {
             try
             {
-
                 logger.Log("Calling method " + invocation.Method.Name);
                 invocation.Proceed();
             }

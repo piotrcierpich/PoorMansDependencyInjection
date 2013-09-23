@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using Autofac;
-using Autofac.Core;
+using Autofac.Configuration;
 using Autofac.Extras.DynamicProxy2;
 
-using Calendar.DataAccess;
 using Calendar.Events;
 using Calendar.Events.AddPolicy;
 using Calendar.Logging;
@@ -17,56 +16,43 @@ namespace Calendar
         static void Main()
         {
             ContainerBuilder containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterType<OptionsDispatcher>().SingleInstance();
+
+            containerBuilder.RegisterType<OptionsDispatcher>()
+                            .SingleInstance()
+                            .EnableClassInterceptors()
+                            .InterceptedBy(typeof(LoggingInterceptor));
+
             containerBuilder.RegisterInstance(Console.In);
+
             containerBuilder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                             .Where(type => type.IsAssignableTo<IOption>())
-                            .AsImplementedInterfaces();
-
-            containerBuilder.RegisterType<EventsRepository>()
-                            .As<IEventsRepository>()
-                            .WithParameter("fileName", "calendarData.dat");
-
-            containerBuilder.RegisterType<Planner>()
                             .AsImplementedInterfaces()
                             .EnableClassInterceptors()
                             .InterceptedBy(typeof(LoggingInterceptor));
 
-            containerBuilder.RegisterType<Meeting>()
-                            .WithParameter(new ResolvedParameter((pi, c) => pi.ParameterType == typeof(IAddPolicy),
-                                                                 (pi, c) => c.Resolve<ExclusiveSchedulePolicy>()))
-                            .InstancePerLifetimeScope()
-                            .AsSelf()
+            containerBuilder.Register(c => new Planner(c.Resolve<IEventsRepository>(),
+                                                       c.ResolveNamed<IAddPolicy>("shareable"),
+                                                       c.ResolveNamed<IAddPolicy>("nonShareable")))
                             .AsImplementedInterfaces();
 
-            containerBuilder.RegisterType<Todo>()
-                            .WithParameter(new ResolvedParameter((pi, c) => pi.ParameterType == typeof(IAddPolicy),
-                                                                 (pi, c) => c.Resolve<ShareableSchedulePolicy>()))
-                            .InstancePerLifetimeScope()
-                            .AsSelf()
-                            .AsImplementedInterfaces();
+            containerBuilder.RegisterModule(new ConfigurationSettingsReader("customXmlConfigurationSection"));
 
             containerBuilder.RegisterType<ExclusiveSchedulePolicy>()
-                            .InstancePerLifetimeScope()
-                            .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+                            .Named<IAddPolicy>("nonShareable");
 
             containerBuilder.RegisterType<ShareableSchedulePolicy>()
-                            .InstancePerLifetimeScope()
-                            .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+                            .Named<IAddPolicy>("shareable");
 
-            containerBuilder.RegisterType<Logger>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<Logger>().SingleInstance();
             containerBuilder.RegisterType<LoggingInterceptor>();
 
             using (IContainer container = containerBuilder.Build())
             {
                 bool continueRunning = true;
+                OptionsDispatcher optionsDispatcher = container.Resolve<OptionsDispatcher>();
                 while (continueRunning)
                 {
-                    using (ILifetimeScope innerScope = container.BeginLifetimeScope())
-                    {
-                        OptionsDispatcher optionsDispatcher = innerScope.Resolve<OptionsDispatcher>();
-                        continueRunning = optionsDispatcher.ChooseOptionAndRun();
-                    }
+                    continueRunning = optionsDispatcher.ChooseOptionAndRun();
                 }
             }
         }

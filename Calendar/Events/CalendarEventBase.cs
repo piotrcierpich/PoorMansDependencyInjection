@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Calendar.Events.AddPolicy;
-
 namespace Calendar.Events
 {
     [Serializable]
@@ -10,18 +8,14 @@ namespace Calendar.Events
         private readonly DateSpan schedule;
         private readonly string title;
 
-        //[NonSerialized]
-        private readonly IAddPolicy addPolicy;
-
-        protected CalendarEventBase(DateSpan schedule, string title, IAddPolicy addPolicy)
+        protected CalendarEventBase(DateSpan schedule, string title)
         {
             this.schedule = schedule;
             this.title = title;
-            this.addPolicy = addPolicy;
         }
 
         public DateSpan Schedule { get { return schedule; } }
         public string Title { get { return title; } }
-        public IAddPolicy AddPolicy { get { return addPolicy; } }
+        public bool CanShareTime { get; set; }
     }
 }

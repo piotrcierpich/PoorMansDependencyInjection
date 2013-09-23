@@ -15,12 +15,12 @@ namespace Calendar.UI
             this.planner = planner;
         }
 
-        public bool MatchesString(string chosenOptionAsString)
+        public virtual bool MatchesString(string chosenOptionAsString)
         {
             return StringComparer.InvariantCultureIgnoreCase.Equals(ListEventsOptionString, chosenOptionAsString);
         }
 
-        public bool Run()
+        public virtual bool Run()
         {
             ICalendarEvent[] calendarEvents = planner.GetEvents(DateSpan.Max);
             foreach (var calendarEvent in calendarEvents)
@@ -30,7 +30,7 @@ namespace Calendar.UI
             return true;
         }
 
-        public override string ToString()
+        public sealed override string ToString()
         {
             return ListEventsOptionString + " - list events";
         }

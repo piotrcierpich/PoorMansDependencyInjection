@@ -17,12 +17,12 @@ namespace Calendar.UI
             this.planner = planner;
         }
 
-        public bool MatchesString(string chosenOptionAsString)
+        public virtual bool MatchesString(string chosenOptionAsString)
         {
             return StringComparer.InvariantCultureIgnoreCase.Equals(AddMeetingOptionString, chosenOptionAsString);
         }
 
-        public bool Run()
+        public virtual bool Run()
         {
             DateSpan dateSpan = DateSpanReader.PromptForDateSpan();
             string title = PromptForTitle();
@@ -48,7 +48,7 @@ namespace Calendar.UI
             return Console.ReadLine();
         }
 
-        public override string ToString()
+        public sealed override string ToString()
         {
             return AddMeetingOptionString + " - meeting";
         }

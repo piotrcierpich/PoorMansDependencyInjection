@@ -22,7 +22,9 @@ namespace Calendar.DataAccess
         {
             try
             {
-                return TryReadingCalendarEvents();
+                IEnumerable<ICalendarEvent> allEvents = TryReadingCalendarEvents();
+                return allEvents.Where(e => e.Schedule.IntersectWith(schedule))
+                                .ToArray();
             }
             catch (Exception)
             {
@@ -30,7 +32,7 @@ namespace Calendar.DataAccess
             }
         }
 
-        private ICalendarEvent[] TryReadingCalendarEvents()
+        private IEnumerable<ICalendarEvent> TryReadingCalendarEvents()
         {
             using (Stream s = File.OpenRead(fileName))
             {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Calendar.Events.AddPolicy
 {
-    [Serializable]
     internal class ExclusiveSchedulePolicy : IAddPolicy
     {
-        [NonSerialized]
         private readonly IEventsRepository eventsRepository;
 
         public ExclusiveSchedulePolicy(IEventsRepository eventsRepository)
@@ -14,24 +11,13 @@ namespace Calendar.Events.AddPolicy
             this.eventsRepository = eventsRepository;
         }
 
-        public void TryAddToRepository()
+        public void TryAddToRepository(ICalendarEvent eventToAdd)
         {
-            if (EventToAdd == null)
-                return;
-
-            ICalendarEvent[] intersectingEvents = eventsRepository.GetEvents(EventToAdd.Schedule);
-            if (intersectingEvents.All(ie => ie.AddPolicy.CanShareTimeSlot))
+            ICalendarEvent[] intersectingEvents = eventsRepository.GetEvents(eventToAdd.Schedule);
+            if (intersectingEvents.All(ie => ie.CanShareTime))
             {
-                eventsRepository.AddEvent(EventToAdd);
+                eventsRepository.AddEvent(eventToAdd);
             }
         }
-
-        public bool CanShareTimeSlot
-        {
-            get { return false; }
-        }
-
-        
-        public ICalendarEvent EventToAdd { get; set; }
     }
 }

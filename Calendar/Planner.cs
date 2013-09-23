@@ -1,25 +1,34 @@
 ﻿using Calendar.Events;
+using Calendar.Events.AddPolicy;
 
 namespace Calendar
 {
     public class Planner : IPlanner
     {
         private readonly IEventsRepository eventsRepository;
+        private readonly IAddPolicy shareableSchedulePolicy;
+        private readonly IAddPolicy exclusiveSchedulePolicy;
 
-        public Planner(IEventsRepository eventsRepository)
+        public Planner(IEventsRepository eventsRepository,
+                       IAddPolicy shareableSchedulePolicy,
+                       IAddPolicy exclusiveSchedulePolicy)
         {
             this.eventsRepository = eventsRepository;
+            this.shareableSchedulePolicy = shareableSchedulePolicy;
+            this.exclusiveSchedulePolicy = exclusiveSchedulePolicy;
         }
 
-        public virtual ICalendarEvent[] GetEvents(DateSpan dateSpan)
+        public ICalendarEvent[] GetEvents(DateSpan dateSpan)
         {
             return eventsRepository.GetEvents(dateSpan);
         }
 
-
-        public virtual void AddEvent(ICalendarEvent eventToAdd)
+        public void AddEvent(ICalendarEvent eventToAdd)
         {
-            eventToAdd.AddPolicy.TryAddToRepository();
+            if (eventToAdd.CanShareTime)
+                shareableSchedulePolicy.TryAddToRepository(eventToAdd);
+            else
+                exclusiveSchedulePolicy.TryAddToRepository(eventToAdd);
         }
     }
 }

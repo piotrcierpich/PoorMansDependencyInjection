@@ -1,11 +1,7 @@
-﻿using System;
-
-namespace Calendar.Events.AddPolicy
+﻿namespace Calendar.Events.AddPolicy
 {
-    [Serializable]
     class ShareableSchedulePolicy : IAddPolicy
     {
-        [NonSerialized]
         private readonly IEventsRepository eventsRepository;
 
         public ShareableSchedulePolicy(IEventsRepository eventsRepository)
@@ -13,16 +9,9 @@ namespace Calendar.Events.AddPolicy
             this.eventsRepository = eventsRepository;
         }
 
-        public void TryAddToRepository()
+        public void TryAddToRepository(ICalendarEvent calendarEvent)
         {
-            if (CalendarEvent == null)
-                return;
-
-            eventsRepository.AddEvent(CalendarEvent);
+            eventsRepository.AddEvent(calendarEvent);
         }
-
-        public bool CanShareTimeSlot { get { return true; } }
-
-        public ICalendarEvent CalendarEvent { get; set; }
     }
 }
