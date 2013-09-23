@@ -16,6 +16,7 @@ namespace Calendar
             return eventsRepository.GetEvents(dateSpan);
         }
 
+
         public void AddEvent(ICalendarEvent eventToAdd)
         {
             eventToAdd.AddPolicy.TryAddToRepository();

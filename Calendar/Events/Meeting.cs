@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using Calendar.Events.AddPolicy;
 
 namespace Calendar.Events
 {
+  [Serializable]
     class Meeting : CalendarEventBase
     {
         private readonly string[] participants;

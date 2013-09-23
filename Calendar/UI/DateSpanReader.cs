@@ -48,7 +48,6 @@ namespace Calendar.UI
                 Console.WriteLine("Incorrect date, expected format '{0}'", DateFormat);
             }
 
-            dateRead = dateRead.AddYears(DateTime.Now.Year);
             return dateRead;
         }
     }

@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Reflection;
 using Autofac;
 using Autofac.Core;
 
@@ -10,47 +10,52 @@ using Calendar.UI;
 
 namespace Calendar
 {
-    class Program
+  class Program
+  {
+    static void Main()
     {
-        static void Main()
+      ContainerBuilder containerBuilder = new ContainerBuilder();
+      containerBuilder.RegisterType<OptionsDispatcher>().SingleInstance();
+      containerBuilder.RegisterInstance(Console.In);
+      containerBuilder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                      .Where(type => type.IsAssignableTo<IOption>())
+                      .AsImplementedInterfaces();
+
+      containerBuilder.RegisterType<EventsRepository>().As<IEventsRepository>().WithParameter("fileName", "calendarData.dat");
+      containerBuilder.RegisterType<Planner>();
+
+      containerBuilder.RegisterType<Meeting>()
+                      .WithParameter(new ResolvedParameter((pi, c) => pi.ParameterType == typeof(IAddPolicy),
+                                                           (pi, c) => c.Resolve<ExclusiveSchedulePolicy>()))
+                      .InstancePerLifetimeScope();
+
+      containerBuilder.RegisterType<Todo>()
+                      .WithParameter(new ResolvedParameter((pi, c) => pi.ParameterType == typeof(IAddPolicy),
+                                                           (pi, c) => c.Resolve<ShareableSchedulePolicy>()))
+                      .InstancePerLifetimeScope();
+
+      containerBuilder.RegisterType<ExclusiveSchedulePolicy>()
+                      .InstancePerLifetimeScope()
+                      .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+
+      containerBuilder.RegisterType<ShareableSchedulePolicy>()
+                      .InstancePerLifetimeScope()
+                      .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+
+      using (IContainer container = containerBuilder.Build())
+      {
+        while (true)
         {
-            ContainerBuilder containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterType<OptionsDispatcher>().SingleInstance();
-            containerBuilder.RegisterInstance(Console.In);
-            containerBuilder.RegisterType<AddTodoOption>().As<IOption>();
-            containerBuilder.Register(c => new AddMeetingOption(c.Resolve<Func<Meeting>>(), c.Resolve<IEventsRepository>()))
-                            .As<IOption>();
-            containerBuilder.RegisterType<ListEventsOption>().As<IOption>();
-            containerBuilder.RegisterType<EventsRepository>().As<IEventsRepository>().WithParameter("fileName", "calendarData.dat");
-            containerBuilder.RegisterType<Planner>();
-
-            containerBuilder.RegisterType<Meeting>()
-                            .WithParameter(new ResolvedParameter((pi, c) => pi.ParameterType == typeof(IAddPolicy),
-                                                                 (pi, c) => c.Resolve<ExclusiveSchedulePolicy>()))
-                            .InstancePerLifetimeScope();
-
-            containerBuilder.RegisterType<Todo>()
-                            .WithParameter(new ResolvedParameter((pi, c) => pi.ParameterType == typeof(IAddPolicy),
-                                                                 (pi, c) => c.Resolve<ShareableSchedulePolicy>()))
-                            .InstancePerLifetimeScope();
-
-            containerBuilder.RegisterType<ExclusiveSchedulePolicy>()
-                            .InstancePerLifetimeScope()
-                            .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
-
-            containerBuilder.RegisterType<ShareableSchedulePolicy>()
-                            .InstancePerLifetimeScope()
-                            .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
-
-            using (IContainer container = containerBuilder.Build())
-            {
-                using (ILifetimeScope innerScope = container.BeginLifetimeScope())
-                {
-                    OptionsDispatcher optionsDispatcher = innerScope.Resolve<OptionsDispatcher>();
-                    optionsDispatcher.ChooseOptionAndRun();
-                }
-            }
-
+          using (ILifetimeScope innerScope = container.BeginLifetimeScope())
+          {
+            OptionsDispatcher optionsDispatcher = innerScope.Resolve<OptionsDispatcher>();
+            optionsDispatcher.ChooseOptionAndRun();
+          }
         }
+      }
+
+      // ReSharper disable FunctionNeverReturns
     }
+    // ReSharper restore FunctionNeverReturns
+  }
 }
