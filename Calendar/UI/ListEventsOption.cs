@@ -8,11 +8,11 @@ namespace Calendar.UI
     {
         internal const string ListEventsOptionString = "l";
 
-        private readonly IEventsRepository eventsRepository;
+        private readonly IPlanner planner;
 
-        public ListEventsOption(IEventsRepository eventsRepository)
+        public ListEventsOption(IPlanner planner)
         {
-            this.eventsRepository = eventsRepository;
+            this.planner = planner;
         }
 
         public bool MatchesString(string chosenOptionAsString)
@@ -20,13 +20,14 @@ namespace Calendar.UI
             return StringComparer.InvariantCultureIgnoreCase.Equals(ListEventsOptionString, chosenOptionAsString);
         }
 
-        public void Run()
+        public bool Run()
         {
-            ICalendarEvent[] calendarEvents = eventsRepository.GetEvents(DateSpan.Max);
+            ICalendarEvent[] calendarEvents = planner.GetEvents(DateSpan.Max);
             foreach (var calendarEvent in calendarEvents)
             {
                 Console.WriteLine(calendarEvent);
             }
+            return true;
         }
 
         public override string ToString()

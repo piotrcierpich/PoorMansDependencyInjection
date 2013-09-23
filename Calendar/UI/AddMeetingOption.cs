@@ -4,52 +4,53 @@ using Calendar.Events;
 
 namespace Calendar.UI
 {
-  internal class AddMeetingOption : IOption
-  {
-    public static string AddMeetingOptionString = "m";
-
-    private readonly Func<DateSpan, string, string[], Meeting> meetingFactory;
-    private readonly IEventsRepository eventsRepository;
-
-    public AddMeetingOption(Func<DateSpan, string, string[], Meeting> meetingFactory, IEventsRepository eventsRepository)
+    internal class AddMeetingOption : IOption
     {
-      this.meetingFactory = meetingFactory;
-      this.eventsRepository = eventsRepository;
-    }
+        public static string AddMeetingOptionString = "m";
 
-    public bool MatchesString(string chosenOptionAsString)
-    {
-      return StringComparer.InvariantCultureIgnoreCase.Equals(AddMeetingOptionString, chosenOptionAsString);
-    }
+        private readonly Func<DateSpan, string, string[], Meeting> meetingFactory;
+        private readonly IPlanner planner;
 
-    public void Run()
-    {
-      DateSpan dateSpan = DateSpanReader.PromptForDateSpan();
-      string title = PromptForTitle();
-      string[] participants = PromptForParticipants();
+        public AddMeetingOption(Func<DateSpan, string, string[], Meeting> meetingFactory, IPlanner planner)
+        {
+            this.meetingFactory = meetingFactory;
+            this.planner = planner;
+        }
 
-      ICalendarEvent calendarEvent = meetingFactory(dateSpan, title, participants);
-      eventsRepository.AddEvent(calendarEvent);
-    }
+        public bool MatchesString(string chosenOptionAsString)
+        {
+            return StringComparer.InvariantCultureIgnoreCase.Equals(AddMeetingOptionString, chosenOptionAsString);
+        }
 
-    private string[] PromptForParticipants()
-    {
-      Console.Write("Participants' names separated with comas: ");
-      string participantsAsString = Console.ReadLine();
-      return participantsAsString != null
-               ? participantsAsString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-               : new string[0];
-    }
+        public bool Run()
+        {
+            DateSpan dateSpan = DateSpanReader.PromptForDateSpan();
+            string title = PromptForTitle();
+            string[] participants = PromptForParticipants();
 
-    private static string PromptForTitle()
-    {
-      Console.Write("Title: ");
-      return Console.ReadLine();
-    }
+            ICalendarEvent meetingEvent = meetingFactory(dateSpan, title, participants);
+            planner.AddEvent(meetingEvent);
+            return true;
+        }
 
-    public override string ToString()
-    {
-      return AddMeetingOptionString + " - meeting";
+        private string[] PromptForParticipants()
+        {
+            Console.Write("Participants' names separated with comas: ");
+            string participantsAsString = Console.ReadLine();
+            return participantsAsString != null
+                     ? participantsAsString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                     : new string[0];
+        }
+
+        private static string PromptForTitle()
+        {
+            Console.Write("Title: ");
+            return Console.ReadLine();
+        }
+
+        public override string ToString()
+        {
+            return AddMeetingOptionString + " - meeting";
+        }
     }
-  }
 }

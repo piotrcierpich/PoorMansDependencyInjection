@@ -22,9 +22,9 @@ namespace Calendar.Tests.UI
         public void ShouldMatchItsOptionAsString()
         {
             Func<DateSpan, string, Todo> todoEventFactory = Substitute.For<Func<DateSpan, string, Todo>>();
-            IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
+            IPlanner planner = Substitute.For<IPlanner>();
 
-            AddTodoOption addTodoOption = new AddTodoOption(todoEventFactory, eventsRepository);
+            AddTodoOption addTodoOption = new AddTodoOption(todoEventFactory, planner);
             bool result = addTodoOption.MatchesString(AddTodoOption.AddToDoOptionString);
             Assert.IsTrue(result);
         }
@@ -37,12 +37,12 @@ namespace Calendar.Tests.UI
             Func<DateSpan, string, Todo> todoEventFactory = Substitute.For<Func<DateSpan, string, Todo>>();
             todoEventFactory(Arg.Any<DateSpan>(), Arg.Any<string>()).Returns(todoEvent);
 
-            IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
+            IPlanner planner = Substitute.For<IPlanner>();
 
-            AddTodoOption addTodoOption = new AddTodoOption(todoEventFactory, eventsRepository);
+            AddTodoOption addTodoOption = new AddTodoOption(todoEventFactory, planner);
             addTodoOption.Run();
             
-            eventsRepository.Received(1).AddEvent(todoEvent);
+            planner.Received(1).AddEvent(todoEvent);
         }
     }
 }

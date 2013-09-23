@@ -10,7 +10,7 @@ namespace Calendar.Events
         private readonly DateSpan schedule;
         private readonly string title;
 
-        [NonSerialized]
+        //[NonSerialized]
         private readonly IAddPolicy addPolicy;
 
         protected CalendarEventBase(DateSpan schedule, string title, IAddPolicy addPolicy)

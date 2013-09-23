@@ -16,10 +16,10 @@ namespace Calendar.UI
             this.textReader = textReader;
         }
 
-        public void ChooseOptionAndRun()
+        public bool ChooseOptionAndRun()
         {
             IOption option = PrintAndChooseOption();
-            option.Run();
+            return option.Run();
         }
 
         private IOption PrintAndChooseOption()

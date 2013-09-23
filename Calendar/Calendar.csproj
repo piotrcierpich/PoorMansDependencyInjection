@@ -37,6 +37,12 @@
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Autofac.Extras.DynamicProxy2">
+      <HintPath>..\packages\Autofac.Extras.DynamicProxy2.3.0.2\lib\net40\Autofac.Extras.DynamicProxy2.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.2.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -61,6 +67,9 @@
     <Compile Include="Events\IEventsRepository.cs" />
     <Compile Include="Events\Meeting.cs" />
     <Compile Include="Events\AddPolicy\ShareableSchedulePolicy.cs" />
+    <Compile Include="IPlanner.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\LoggingInterceptor.cs" />
     <Compile Include="Planner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +78,7 @@
     <Compile Include="UI\AddMeetingOption.cs" />
     <Compile Include="UI\AddTodoOption.cs" />
     <Compile Include="UI\DateSpanReader.cs" />
+    <Compile Include="UI\EndApplicationOption.cs" />
     <Compile Include="UI\IOption.cs" />
     <Compile Include="UI\ListEventsOption.cs" />
     <Compile Include="UI\OptionsDispatcher.cs" />
@@ -80,6 +90,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

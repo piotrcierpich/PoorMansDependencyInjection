@@ -2,7 +2,7 @@
 
 namespace Calendar
 {
-    public class Planner
+    public class Planner : IPlanner
     {
         private readonly IEventsRepository eventsRepository;
 
@@ -11,13 +11,13 @@ namespace Calendar
             this.eventsRepository = eventsRepository;
         }
 
-        public ICalendarEvent[] GetEvents(DateSpan dateSpan)
+        public virtual ICalendarEvent[] GetEvents(DateSpan dateSpan)
         {
             return eventsRepository.GetEvents(dateSpan);
         }
 
 
-        public void AddEvent(ICalendarEvent eventToAdd)
+        public virtual void AddEvent(ICalendarEvent eventToAdd)
         {
             eventToAdd.AddPolicy.TryAddToRepository();
         }

@@ -1,7 +1,11 @@
-﻿namespace Calendar.Events.AddPolicy
+﻿using System;
+
+namespace Calendar.Events.AddPolicy
 {
+    [Serializable]
     class ShareableSchedulePolicy : IAddPolicy
     {
+        [NonSerialized]
         private readonly IEventsRepository eventsRepository;
 
         public ShareableSchedulePolicy(IEventsRepository eventsRepository)

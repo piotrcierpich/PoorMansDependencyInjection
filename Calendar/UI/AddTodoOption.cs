@@ -9,12 +9,12 @@ namespace Calendar.UI
         internal const string AddToDoOptionString = "a";
 
         private readonly Func<DateSpan, string, Todo> todoEventFactory;
-        private readonly IEventsRepository eventsRepository;
+        private readonly IPlanner planner;
 
-        public AddTodoOption(Func<DateSpan, string, Todo> todoEventFactory, IEventsRepository eventsRepository)
+        public AddTodoOption(Func<DateSpan, string, Todo> todoEventFactory, IPlanner planner)
         {
             this.todoEventFactory = todoEventFactory;
-            this.eventsRepository = eventsRepository;
+            this.planner = planner;
         }
 
         public bool MatchesString(string chosenOptionAsString)
@@ -27,13 +27,14 @@ namespace Calendar.UI
             return AddToDoOptionString + " - todo";
         }
 
-        public void Run()
+        public bool Run()
         {
             DateSpan schedule = DateSpanReader.PromptForDateSpan();
             Console.Write("Title: ");
             string title = Console.ReadLine();
-            ICalendarEvent calendarEvent = todoEventFactory(schedule, title);
-            eventsRepository.AddEvent(calendarEvent);
+            ICalendarEvent todoEvent = todoEventFactory(schedule, title);
+            planner.AddEvent(todoEvent);
+            return true;
         }
     }
 }

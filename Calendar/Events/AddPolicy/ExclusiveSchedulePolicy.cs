@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Calendar.Events.AddPolicy
 {
+    [Serializable]
     internal class ExclusiveSchedulePolicy : IAddPolicy
     {
+        [NonSerialized]
         private readonly IEventsRepository eventsRepository;
 
         public ExclusiveSchedulePolicy(IEventsRepository eventsRepository)
@@ -28,6 +31,7 @@ namespace Calendar.Events.AddPolicy
             get { return false; }
         }
 
+        
         public ICalendarEvent EventToAdd { get; set; }
     }
 }

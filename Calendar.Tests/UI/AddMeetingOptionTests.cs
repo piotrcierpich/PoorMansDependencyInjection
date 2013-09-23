@@ -22,9 +22,9 @@ namespace Calendar.Tests.UI
     public void ShouldMatchItsOptionString()
     {
       Func<DateSpan, string, string[], Meeting> meetingFactory = Substitute.For<Func<DateSpan, string, string[], Meeting>>();
-      IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
+      IPlanner planner = Substitute.For<IPlanner>();
 
-      AddMeetingOption addMeetingOption = new AddMeetingOption(meetingFactory, eventsRepository);
+      AddMeetingOption addMeetingOption = new AddMeetingOption(meetingFactory, planner);
       bool result = addMeetingOption.MatchesString(AddMeetingOption.AddMeetingOptionString);
       Assert.IsTrue(result);
     }
@@ -37,12 +37,12 @@ namespace Calendar.Tests.UI
       Func<DateSpan, string, string[], Meeting> meetingFactory = Substitute.For<Func<DateSpan, string, string[], Meeting>>();
       meetingFactory(Arg.Any<DateSpan>(), Arg.Any<string>(), Arg.Any<string[]>()).Returns(meetingEvent);
 
-      IEventsRepository eventsRepository = Substitute.For<IEventsRepository>();
-      AddMeetingOption addMeetingOption = new AddMeetingOption(meetingFactory, eventsRepository);
+      IPlanner planner = Substitute.For<IPlanner>();
+      AddMeetingOption addMeetingOption = new AddMeetingOption(meetingFactory, planner);
 
       addMeetingOption.Run();
 
-      eventsRepository.Received(1).AddEvent(meetingEvent);
+      planner.Received(1).AddEvent(meetingEvent);
     }
   }
 }
