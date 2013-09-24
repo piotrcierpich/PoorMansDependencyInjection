@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Reflection;
-using Autofac;
-using Autofac.Configuration;
-using Autofac.Extras.DynamicProxy2;
-
+using Calendar.DataAccess;
 using Calendar.Events;
 using Calendar.Events.AddPolicy;
 using Calendar.Logging;
@@ -11,50 +7,44 @@ using Calendar.UI;
 
 namespace Calendar
 {
-    class Program
+  class Program
+  {
+    static void Main()
     {
-        static void Main()
+      using (Logger logger = new Logger())
+      {
+        IEventsRepository eventsRepository = new EventsRepository("calendarData.dat");
+        IAddPolicy shareableSchedulePolicy = new ShareableSchedulePolicy(eventsRepository);
+        IAddPolicy exclusiveSchedulePolicy = new ExclusiveSchedulePolicy(eventsRepository);
+
+        Planner planner = new Planner(eventsRepository, shareableSchedulePolicy, exclusiveSchedulePolicy);
+
+        IMeetingFactory meetingFactory = new MeetingFactory();
+        IOption addMeetingOption = new AddMeetingOption(meetingFactory, planner, logger);
+
+        ITodoFactory todoFactory = new TodoFactory();
+        IOption addTodoOption = new AddTodoOption(todoFactory, planner, logger);
+
+        IOption listEventsOption = new ListEventsOption(planner);
+
+        IOption endApplicationOption = new EndApplicationOption();
+
+        OptionsDispatcher optionsDispatcher = new OptionsDispatcher(new[]
+          {
+            addTodoOption,
+            addMeetingOption,
+            listEventsOption,
+            endApplicationOption,
+          }, 
+          Console.In, 
+          logger);
+
+        bool result = true;
+        while (result)
         {
-            ContainerBuilder containerBuilder = new ContainerBuilder();
-
-            containerBuilder.RegisterType<OptionsDispatcher>()
-                            .SingleInstance()
-                            .EnableClassInterceptors()
-                            .InterceptedBy(typeof(LoggingInterceptor));
-
-            containerBuilder.RegisterInstance(Console.In);
-
-            containerBuilder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                            .Where(type => type.IsAssignableTo<IOption>())
-                            .AsImplementedInterfaces()
-                            .EnableClassInterceptors()
-                            .InterceptedBy(typeof(LoggingInterceptor));
-
-            containerBuilder.Register(c => new Planner(c.Resolve<IEventsRepository>(),
-                                                       c.ResolveNamed<IAddPolicy>("shareable"),
-                                                       c.ResolveNamed<IAddPolicy>("nonShareable")))
-                            .AsImplementedInterfaces();
-
-            containerBuilder.RegisterModule(new ConfigurationSettingsReader("customXmlConfigurationSection"));
-
-            containerBuilder.RegisterType<ExclusiveSchedulePolicy>()
-                            .Named<IAddPolicy>("nonShareable");
-
-            containerBuilder.RegisterType<ShareableSchedulePolicy>()
-                            .Named<IAddPolicy>("shareable");
-
-            containerBuilder.RegisterType<Logger>().SingleInstance();
-            containerBuilder.RegisterType<LoggingInterceptor>();
-
-            using (IContainer container = containerBuilder.Build())
-            {
-                bool continueRunning = true;
-                OptionsDispatcher optionsDispatcher = container.Resolve<OptionsDispatcher>();
-                while (continueRunning)
-                {
-                    continueRunning = optionsDispatcher.ChooseOptionAndRun();
-                }
-            }
+          result = optionsDispatcher.ChooseOptionAndRun();
         }
+      }
     }
+  }
 }

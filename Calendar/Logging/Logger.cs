@@ -3,8 +3,8 @@ using System.IO;
 
 namespace Calendar.Logging
 {
-    class Logger : IDisposable
-    {
+  class Logger : IDisposable, ILogger
+  {
         private readonly StreamWriter streamWriter;
 
         public Logger()

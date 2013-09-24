@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Calendar.Events;
+using Calendar.Logging;
 using Calendar.UI;
 
 using NSubstitute;
@@ -21,10 +22,10 @@ namespace Calendar.Tests.UI
     [Test]
     public void ShouldMatchItsOptionString()
     {
-      Func<DateSpan, string, string[], Meeting> meetingFactory = Substitute.For<Func<DateSpan, string, string[], Meeting>>();
+      IMeetingFactory meetingFactory = Substitute.For<IMeetingFactory>();
       IPlanner planner = Substitute.For<IPlanner>();
-
-      AddMeetingOption addMeetingOption = new AddMeetingOption(meetingFactory, planner);
+      ILogger logger = Substitute.For<ILogger>();
+      AddMeetingOption addMeetingOption = new AddMeetingOption(meetingFactory, planner, logger);
       bool result = addMeetingOption.MatchesString(AddMeetingOption.AddMeetingOptionString);
       Assert.IsTrue(result);
     }
